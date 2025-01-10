@@ -31,8 +31,8 @@ const buttonVariants = cva(
       },
     },
     defaultVariants: {
-      variant: "brand",
-      size: "brand",
+      variant: "default",
+      size: "default",
     },
   }
 );

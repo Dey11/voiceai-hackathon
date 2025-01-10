@@ -9,6 +9,31 @@ export default {
   ],
   theme: {
     extend: {
+      keyframes: {
+        typing: {
+          "0%": {
+            width: "0%",
+            visibility: "hidden",
+          },
+          "70%": {
+            width: "100%",
+          },
+          "100%": {
+            width: "100%",
+          },
+        },
+        blink: {
+          "50%": {
+            borderColor: "transparent",
+          },
+          "100%": {
+            borderColor: "white",
+          },
+        },
+      },
+      animation: {
+        typing: "typing 2s steps(20) infinite alternate, blink .7s infinite",
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -51,7 +76,9 @@ export default {
           "5": "hsl(var(--chart-5))",
         },
         brand: {
-          bg: "#fef6e4",
+          bg: "#070707",
+          foreground: "#E8E0D8",
+          muted: "#7C7C7C",
           heading: "#001858",
           text: "#172c66",
           btn: "#f582ae",

@@ -1,11 +1,19 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useSession } from "@clerk/nextjs";
-import { Pencil, Plus } from "lucide-react";
+import { Plus, Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Product } from "@/lib/types";
 
 const ProductsList = () => {
@@ -16,44 +24,32 @@ const ProductsList = () => {
 
   const addNewProduct = async (newProduct: Product) => {
     try {
-      const res = await fetch("/api/product", {
+      await fetch("/api/product", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newProduct),
       });
-      const data = await res.json();
 
-      if (data.status === 200) {
-        fetchProducts();
-      } else {
-        throw new Error(data.msg);
-        setError(data.msg);
-      }
+      fetchProducts();
     } catch (err) {
       console.error(err);
       setError("Something went wrong");
     }
   };
 
-  const editProduct = async (editedProduct: Product) => {
+  const deleteProduct = async (deletedProduct: Product) => {
     try {
-      const res = await fetch("/api/product", {
-        method: "PUT",
+      await fetch("/api/product", {
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(editedProduct),
+        body: JSON.stringify(deletedProduct),
       });
-      const data = await res.json();
 
-      if (data.status === 200) {
-        fetchProducts();
-      } else {
-        throw new Error(data.msg);
-        setError(data.msg);
-      }
+      fetchProducts();
     } catch (err) {
       console.error(err);
       setError("Something went wrong");
@@ -62,7 +58,7 @@ const ProductsList = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch("/api/products");
+      const res = await fetch("/api/product");
       const data = await res.json();
       setProducts(data);
     } catch (err) {
@@ -73,25 +69,68 @@ const ProductsList = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [products]);
+  }, []);
 
   return (
     <div className="mt-16">
       <div className="mb-4 flex w-full flex-row-reverse items-center justify-between">
-        <Button
-          className="flex items-center gap-x-2 bg-brand-foreground text-lg text-black hover:bg-brand-foreground/80"
-          onClick={() =>
-            addNewProduct({
-              name: "DemoProd1",
-              price: 100,
-              description: "DemoProdDesc",
-            })
-          }
-        >
-          Add new product
-          <Plus className="size-4" />
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="flex items-center gap-x-2 bg-brand-foreground text-lg text-black hover:bg-brand-foreground/80">
+              Add new product
+              <Plus className="size-4" />
+            </Button>
+          </DialogTrigger>
+
+          <DialogContent className="border-brand-foreground bg-[#232323] text-brand-foreground">
+            {/* <DialogHeader> */}
+            <form
+              action={(formData: FormData) => {
+                const name = formData.get("name") as string;
+                const description = formData.get("description") as string;
+                const price = parseInt(formData.get("price") as string);
+                addNewProduct({ name, description, price });
+              }}
+            >
+              <DialogTitle className="text-2xl">Add new product</DialogTitle>
+              <label id="name">
+                Product Name
+                <Input
+                  type="text"
+                  placeholder="Product name"
+                  name="name"
+                  id="name"
+                  className="bg-[#232323]"
+                />
+              </label>
+
+              <label>
+                Description
+                <Textarea
+                  placeholder="Description"
+                  id="description"
+                  name="description"
+                  className="bg-[#232323]"
+                />
+              </label>
+
+              <label id="name">
+                Price
+                <Input
+                  type="number"
+                  placeholder="Price"
+                  id="price"
+                  name="price"
+                  className="bg-[#232323]"
+                />
+              </label>
+
+              <Button className="mt-4">Submit</Button>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
+
       <div className="rounded-lg bg-[#232323] py-5">
         <div className="grid grid-cols-12 items-center gap-4 px-1 text-center text-xl text-brand-foreground">
           <p className="col-span-2">No.</p>
@@ -109,7 +148,10 @@ const ProductsList = () => {
             <p className="col-span-5 truncate px-1">{product.description}</p>
             <p className="col-span-2 px-1"> {product.price}</p>
             <div className="col-span-1 flex items-center justify-center">
-              <Pencil className="size-4" />
+              <Trash
+                className="size-4 cursor-pointer"
+                onClick={() => deleteProduct(product)}
+              />
             </div>
           </div>
         ))}
@@ -121,30 +163,3 @@ const ProductsList = () => {
 };
 
 export default ProductsList;
-
-const productsArray = [
-  {
-    id: 1,
-    name: "Product 1",
-    description: "Description 1 is my description",
-    price: 100,
-  },
-  {
-    id: 2,
-    name: "Product 2",
-    description: "Description 2 is my description",
-    price: 200,
-  },
-  {
-    id: 3,
-    name: "Product 3",
-    description: "Description 3 is my description",
-    price: 300,
-  },
-  {
-    id: 4,
-    name: "Product 4",
-    description: "Description 4 is my description",
-    price: 400,
-  },
-];

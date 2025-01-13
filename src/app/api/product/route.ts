@@ -1,18 +1,11 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { auth } from "@clerk/nextjs/server";
 
 import { prisma } from "@/lib/db";
-import { Product } from "@/lib/types";
-import { editProductObj, productObj } from "@/lib/zod";
+import { productObj } from "@/lib/zod";
 
-type Response<T> = {
-  status: Number;
-  msg: String;
-  payload?: T;
-};
-
-export async function GET(request: NextRequest): Promise<Response<Product[]>> {
+export async function GET(request: NextRequest) {
   try {
     const isAuthenticated = await auth();
     if (!isAuthenticated.userId) {
@@ -28,34 +21,21 @@ export async function GET(request: NextRequest): Promise<Response<Product[]>> {
       },
     });
 
-    return {
-      status: 200,
-      msg: "Success",
-      payload: productsInDb as Product[],
-    };
+    return NextResponse.json(productsInDb);
   } catch (err) {
     console.error(err);
-    if (err instanceof Error) {
-      return {
-        status: 401,
-        msg: err.message,
-      };
-    }
-    return {
-      status: 500,
-      msg: "Something went wrong",
-    };
+    return NextResponse.json({ msg: "Something went wrong" });
   }
 }
 
-export async function POST(request: NextRequest): Promise<Response<Product>> {
+export async function POST(request: NextRequest) {
   try {
     const isAuthenticated = await auth();
     if (!isAuthenticated.userId) {
       throw new Error("Unauthorized");
     }
 
-    const rawData = await request.body;
+    const rawData = await request.json();
     const data = productObj.safeParse(rawData);
 
     if (!data.success) {
@@ -71,68 +51,56 @@ export async function POST(request: NextRequest): Promise<Response<Product>> {
       },
     });
 
-    return {
-      status: 200,
-      msg: "Success",
-      payload: product,
-    };
+    return NextResponse.json(product);
   } catch (err) {
     console.error(err);
-    if (err instanceof Error) {
-      return {
-        status: 401,
-        msg: err.message,
-      };
-    }
-    return {
-      status: 500,
-      msg: "Something went wrong",
-    };
+    return NextResponse.json({ msg: "Something went wrong" });
   }
 }
 
-export async function PUT(request: NextRequest) {
+export async function DELETE(request: NextRequest) {
   try {
     const isAuthenticated = await auth();
     if (!isAuthenticated.userId) {
       throw new Error("Unauthorized");
     }
 
-    const rawData = await request.body;
-    const data = editProductObj.safeParse(rawData);
+    const rawData = await request.json();
 
-    if (!data.success) {
-      throw new Error(data.error.message);
-    }
-
-    const product = await prisma.product.update({
-      where: {
-        id: data.data.id,
-        userId: isAuthenticated.userId,
-      },
-      data: {
-        name: data.data.name,
-        description: data.data.description,
-        price: data.data.price,
-      },
+    const product = await prisma.product.delete({
+      where: { id: rawData.id },
     });
 
-    return {
-      status: 200,
-      msg: "Success",
-      payload: product,
-    };
+    return NextResponse.json(product);
   } catch (err) {
     console.error(err);
-    if (err instanceof Error) {
-      return {
-        status: 401,
-        msg: err.message,
-      };
-    }
-    return {
-      status: 500,
-      msg: "Something went wrong",
-    };
+    return NextResponse.json({ msg: "Something went wrong" });
   }
 }
+
+// const productsArray = [
+//   {
+//     id: 1,
+//     name: "Product 1",
+//     description: "Description 1 is my description",
+//     price: 100,
+//   },
+//   {
+//     id: 2,
+//     name: "Product 2",
+//     description: "Description 2 is my description",
+//     price: 200,
+//   },
+//   {
+//     id: 3,
+//     name: "Product 3",
+//     description: "Description 3 is my description",
+//     price: 300,
+//   },
+//   {
+//     id: 4,
+//     name: "Product 4",
+//     description: "Description 4 is my description",
+//     price: 400,
+//   },
+// ];

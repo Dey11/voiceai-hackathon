@@ -13,8 +13,8 @@ const font = Afacad({
 });
 
 export const metadata: Metadata = {
-  title: "Write.",
-  description: "Just another blog.",
+  title: "DialMate AI",
+  description: "Voice Calling AI Agent.",
 };
 
 export default function RootLayout({
@@ -26,7 +26,7 @@ export default function RootLayout({
     <Providers>
       <html lang="en">
         <body
-          className={`${font.className} text-brand-foreground bg-brand-bg tracking-wide antialiased`}
+          className={`${font.className} bg-brand-bg tracking-wide text-brand-foreground antialiased`}
         >
           <Header />
           <main className="mx-auto max-w-screen-lg">

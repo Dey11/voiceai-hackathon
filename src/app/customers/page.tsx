@@ -14,53 +14,54 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Product } from "@/lib/types";
+import { Customer } from "@/lib/types";
+import { CustomerType } from "@/lib/zod";
 
-const ProductsList = () => {
+const CustomersList = () => {
   const user = useSession();
   const userId = user.session?.id;
-  const [products, setProducts] = useState<Product[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
   const [error, setError] = useState<string>("");
 
-  const addNewProduct = async (newProduct: Product) => {
+  const addNewCustomer = async (newCustomer: CustomerType) => {
     try {
-      await fetch("/api/product", {
+      await fetch("/api/customer", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newProduct),
+        body: JSON.stringify(newCustomer),
       });
 
-      fetchProducts();
+      fetchCustomers();
     } catch (err) {
       console.error(err);
       setError("Something went wrong");
     }
   };
 
-  const deleteProduct = async (deletedProduct: Product) => {
+  const deleteCustomer = async (deletedCustomer: Customer) => {
     try {
-      await fetch("/api/product", {
+      await fetch("/api/customer", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(deletedProduct),
+        body: JSON.stringify(deletedCustomer),
       });
 
-      fetchProducts();
+      fetchCustomers();
     } catch (err) {
       console.error(err);
       setError("Something went wrong");
     }
   };
 
-  const fetchProducts = async () => {
+  const fetchCustomers = async () => {
     try {
-      const res = await fetch("/api/product");
+      const res = await fetch("/api/customer");
       const data = await res.json();
-      setProducts(data);
+      setCustomers(data);
     } catch (err) {
       console.error(err);
       setError("Something went wrong");
@@ -68,7 +69,7 @@ const ProductsList = () => {
   };
 
   useEffect(() => {
-    fetchProducts();
+    fetchCustomers();
   }, []);
 
   if (!user.isLoaded) {
@@ -85,27 +86,26 @@ const ProductsList = () => {
         <Dialog>
           <DialogTrigger asChild>
             <Button className="flex items-center gap-x-2 bg-brand-foreground text-lg text-black hover:bg-brand-foreground/80">
-              Add new product
+              Add new customer
               <Plus className="size-4" />
             </Button>
           </DialogTrigger>
 
           <DialogContent className="border-brand-foreground bg-[#232323] text-brand-foreground">
-            {/* <DialogHeader> */}
             <form
               action={(formData: FormData) => {
                 const name = formData.get("name") as string;
-                const description = formData.get("description") as string;
-                const price = parseInt(formData.get("price") as string);
-                addNewProduct({ name, description, price });
+                const context = formData.get("context") as string;
+                const number = parseInt(formData.get("number") as string);
+                addNewCustomer({ name, context, number });
               }}
             >
-              <DialogTitle className="text-2xl">Add new product</DialogTitle>
+              <DialogTitle className="text-2xl">Add new customer</DialogTitle>
               <label id="name">
-                Product Name
+                Customer Name
                 <Input
                   type="text"
-                  placeholder="Product name"
+                  placeholder="Customer name"
                   name="name"
                   id="name"
                   className="bg-[#232323]"
@@ -113,28 +113,29 @@ const ProductsList = () => {
               </label>
 
               <label>
-                Description
+                Context/Notes
                 <Textarea
-                  placeholder="Description"
-                  id="description"
-                  name="description"
+                  placeholder="Context/Notes"
+                  id="context"
+                  name="context"
                   className="bg-[#232323]"
                 />
               </label>
 
-              <label id="name">
-                Price
+              <label id="number">
+                Phone Number
                 <Input
-                  type="number"
-                  placeholder="Price"
-                  id="price"
-                  name="price"
+                  type="tel"
+                  placeholder="Phone number"
+                  id="number"
+                  name="number"
+                  pattern="[0-9]{10}"
                   className="bg-[#232323]"
                 />
               </label>
 
               <Button className="mt-4 w-full bg-brand-foreground text-brand-bg hover:bg-brand-foreground/80">
-                Submit
+                Save & start calls
               </Button>
             </form>
           </DialogContent>
@@ -144,23 +145,23 @@ const ProductsList = () => {
       <div className="rounded-lg bg-[#232323] py-5">
         <div className="grid grid-cols-12 items-center gap-4 px-1 text-center text-xl text-brand-foreground">
           <p className="col-span-2">No.</p>
-          <p className="col-span-2">Name</p>
-          <p className="col-span-5">Description</p>
-          <p className="col-span-2">Price</p>
+          <p className="col-span-3">Name</p>
+          <p className="col-span-4">Context</p>
+          <p className="col-span-2">Phone</p>
         </div>
-        {products.map((product, no) => (
+        {customers.map((customer, no) => (
           <div
-            key={no}
+            key={customer.id}
             className="mt-2 grid grid-cols-12 items-center gap-4 truncate text-center text-brand-foreground transition-all delay-100 duration-100 hover:bg-black/20"
           >
-            <p className="col-span-2 px-1"> {no + 1}</p>
-            <p className="col-span-2 truncate px-1">{product.name}</p>
-            <p className="col-span-5 truncate px-1">{product.description}</p>
-            <p className="col-span-2 px-1"> {product.price}</p>
+            <p className="col-span-2 px-1">{no + 1}</p>
+            <p className="col-span-3 truncate px-1">{customer.name}</p>
+            <p className="col-span-4 truncate px-1">{customer.context}</p>
+            <p className="col-span-2 px-1">{customer.number}</p>
             <div className="col-span-1 flex items-center justify-center">
               <Trash
                 className="size-4 cursor-pointer"
-                onClick={() => deleteProduct(product)}
+                onClick={() => deleteCustomer(customer)}
               />
             </div>
           </div>
@@ -172,4 +173,4 @@ const ProductsList = () => {
   );
 };
 
-export default ProductsList;
+export default CustomersList;

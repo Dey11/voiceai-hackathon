@@ -7,6 +7,9 @@ export const productObj = z.object({
 });
 
 export const customerObj = z.object({
-  name: z.string().min(1, "Customer name is required"),
-  context: z.string().min(1, "Customer context is required"),
+  name: z.string().min(1),
+  context: z.string().min(1),
+  number: z.number().min(1000000000).max(9999999999),
 });
+
+export type CustomerType = z.infer<typeof customerObj>;

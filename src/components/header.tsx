@@ -47,12 +47,13 @@ const Header = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="border-0 bg-brand-bg/80 text-brand-foreground">
               {dropdownMenuItems.map((item) => (
-                <DropdownMenuItem
+                <Link
+                  href={item.link}
                   key={item.name}
                   className="hover:bg-brand-foreground hover:text-brand-bg"
                 >
-                  <Link href={item.link}>{item.name}</Link>
-                </DropdownMenuItem>
+                  <DropdownMenuItem>{item.name}</DropdownMenuItem>
+                </Link>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>

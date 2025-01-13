@@ -9,4 +9,8 @@ export type Customer = {
   id: string;
   name: string;
   context: string;
+  number: string;
+  userId?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 };

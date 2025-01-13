@@ -43,6 +43,7 @@ model Customer {
   id      String @id @default(uuid())
   name    String
   context String
+  number  String
 
   User   User?   @relation(fields: [userId], references: [id])
   userId String?

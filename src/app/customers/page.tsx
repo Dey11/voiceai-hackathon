@@ -144,8 +144,8 @@ const CustomersList = () => {
 
       <div className="rounded-lg bg-[#232323] py-5">
         <div className="grid grid-cols-12 items-center gap-4 px-1 text-center text-xl text-brand-foreground">
-          <p className="col-span-2">No.</p>
-          <p className="col-span-3">Name</p>
+          <p className="col-span-1">No.</p>
+          <p className="col-span-2">Name</p>
           <p className="col-span-4">Context</p>
           <p className="col-span-2">Phone</p>
         </div>
@@ -154,8 +154,8 @@ const CustomersList = () => {
             key={customer.id}
             className="mt-2 grid grid-cols-12 items-center gap-4 truncate text-center text-brand-foreground transition-all delay-100 duration-100 hover:bg-black/20"
           >
-            <p className="col-span-2 px-1">{no + 1}</p>
-            <p className="col-span-3 truncate px-1">{customer.name}</p>
+            <p className="col-span-1 px-1">{no + 1}</p>
+            <p className="col-span-2 truncate px-1">{customer.name}</p>
             <p className="col-span-4 truncate px-1">{customer.context}</p>
             <p className="col-span-2 px-1">{customer.number}</p>
             <div className="col-span-1 flex items-center justify-center">
@@ -164,6 +164,13 @@ const CustomersList = () => {
                 onClick={() => deleteCustomer(customer)}
               />
             </div>
+            <a
+              target="_blank"
+              href={"https://encode-backend.vercel.app/" + customer.id}
+              className="col-span-2 text-center"
+            >
+              Call the agent
+            </a>
           </div>
         ))}
       </div>

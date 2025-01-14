@@ -7,6 +7,26 @@ import { customerObj } from "@/lib/zod";
 
 export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    if (id) {
+      const customer = await prisma.customer.findUnique({
+        where: {
+          id: id,
+        },
+      });
+
+      if (!customer) {
+        return NextResponse.json(
+          { msg: "Customer not found" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json(customer);
+    }
+
     const isAuthenticated = await auth();
     if (!isAuthenticated.userId) {
       throw new Error("Unauthorized");

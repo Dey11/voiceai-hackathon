@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 import { H1 } from "@/components/typography/h1";
@@ -14,19 +15,23 @@ const page = () => {
       <Para>Get started by creating your first call campaign</Para>
 
       <div className="mt-10 flex flex-wrap gap-4">
-        <Button
-          size={"lg"}
-          className="border-2 border-dotted border-brand-foreground bg-brand-muted text-base text-white hover:bg-brand-muted/80"
-        >
-          Add customers
-        </Button>
+        <Link href={"/customers"}>
+          <Button
+            size={"lg"}
+            className="border-2 border-dotted border-brand-foreground bg-brand-muted text-base text-white hover:bg-brand-muted/80"
+          >
+            Add customers
+          </Button>
+        </Link>
 
-        <Button
-          size={"lg"}
-          className="border-2 border-dotted border-brand-muted bg-brand-foreground text-base text-[#232323] hover:bg-brand-foreground/80"
-        >
-          Add products
-        </Button>
+        <Link href={"/products"}>
+          <Button
+            size={"lg"}
+            className="border-2 border-dotted border-brand-muted bg-brand-foreground text-base text-[#232323] hover:bg-brand-foreground/80"
+          >
+            Add products
+          </Button>
+        </Link>
       </div>
     </div>
   );

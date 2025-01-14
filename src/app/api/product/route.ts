@@ -7,6 +7,18 @@ import { productObj } from "@/lib/zod";
 
 export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get("userId");
+
+    if (userId) {
+      const prods = await prisma.product.findMany({
+        where: {
+          userId: userId,
+        },
+      });
+      return NextResponse.json(prods);
+    }
+
     const isAuthenticated = await auth();
     if (!isAuthenticated.userId) {
       throw new Error("Unauthorized");

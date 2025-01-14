@@ -9,8 +9,7 @@ A modern admin dashboard for managing voice calling agents that help users sell 
 - Customer management interface
 - Product catalog management
 - Agent onboarding workflow
-- Real-time call monitoring
-- Webhook integration for call events
+- Webhook integration
 - Responsive and accessible UI
 
 ## Tech Stack

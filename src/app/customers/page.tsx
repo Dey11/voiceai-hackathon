@@ -21,7 +21,11 @@ const CustomersList = () => {
   const user = useSession();
   const userId = user.session?.id;
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string>(
+    `We cannot do phone calls at the moment due to unavailability of twilio paid api. 
+    Currently voice agent works only with registered phone numbers on the twilio dashboard.
+    Please click on the "Call the agent" button to get redirected to a web based ai agent with all the functionalities.`
+  );
 
   const addNewCustomer = async (newCustomer: CustomerType) => {
     try {
